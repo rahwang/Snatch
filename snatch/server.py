@@ -1,15 +1,16 @@
 import websockets
 import asyncio
+import json
 
 async def hello(websocket, path):
-    name = await websocket.recv()
-    print(f"< {name}")
+    raw_data = await websocket.recv()
+    data = json.loads(raw_data)
 
-    greeting = f"Hello {name}!"
+    print(f"got data {data}")
 
-    await websocket.send(greeting)
-    print(f"> {greeting}")
-
+    if data.get("action") == "join":
+        print("responding to join")
+        await websocket.send(json.dumps({"name": "foo"}))
 
 def start_websocket_server():
     server = websockets.serve(hello, "localhost", 8765)
