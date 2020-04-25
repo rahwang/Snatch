@@ -110,15 +110,15 @@ dmypy.json
 
 
 ### JavaScript ### (copied from create-react-app generated gitignore)
-snatch-client/node_modules
-snatch-client/.pnp
+node_modules
+.pnp
 .pnp.js
 
 # testing
-snatch-client/coverage
+coverage
 
 # production
-snatch-client/build
+build
 
 # misc
 .env.local
