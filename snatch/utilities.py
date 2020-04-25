@@ -1,3 +1,5 @@
+from pathlib import Path
+
 def get_tile_distribution():
   return {'A': 9,
           'B': 2,
@@ -59,15 +61,15 @@ def get_game_rules():
   return {
     'min_word_length': 4
   }
-  
-  
+
+
 # dist1 is a subset of dist2
 def subtract_distributions(dist1, dist2):
   for key in dist2.keys():
     dist2[key] -= dist1[key]
   return dist2
-    
-    
+
+
 # word: a string
 # distribution: a dictionary mapping letters to counts
 def word_is_subset(word, available_dist):
@@ -96,10 +98,14 @@ def merge_distributions(dist1, dist2):
       merged[k] += dist1[k]
     if k in dist2:
       merged[k] += dist2[k]
-  return merged  
+  return merged
 
 
 def load_scrabble_dictionary():
-  with open('scrabble_dictionary.txt') as f:
+  base_path = Path(__file__).parent
+  # TODO: assumes that scrabble_dictionary is next to utilities
+  # should change this so it looks from project root
+  file_path = (base_path / "scrabble_dictionary.txt").resolve()
+  with open(file_path) as f:
     valid_words = [line.strip() for line in f.readlines()]
     return set(valid_words)
