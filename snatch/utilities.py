@@ -1,3 +1,4 @@
+from collections import Counter
 from pathlib import Path
 
 def get_tile_distribution():
@@ -79,7 +80,7 @@ def word_is_subset(word, available_dist):
 
 # is dist1 a sebset of dist2?
 def distribution_is_subset(dist1, dist2):
-  for k in set.keys():
+  for k in dist1.keys():
     if not k in dist2:
       return False
     if dist2[k] < dist1[k]:

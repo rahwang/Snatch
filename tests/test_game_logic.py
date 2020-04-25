@@ -1,4 +1,4 @@
-from snatch.utilities import get_tile_distribution, load_scrabble_dictionary, get_empty_tile_distribution
+from snatch.utilities import get_tile_distribution, load_scrabble_dictionary, get_empty_tile_distribution, get_game_rules
 from snatch.game import Board, Game
 
 def test_board_init():
@@ -36,9 +36,9 @@ def test_flip_letter():
   b.flip_letter("N")
   b.flip_letter("A")
 
-  assert(board.tiles_in_play == {'B': 1,'A': 3, 'N': 2})
-  assert(board.tiles_remaining['B'] == 1)      # assumes initial count of 2
-  assert(board.tiles_remaining['A'] == 6)      # assumes initial count of 9
+  assert(b.tiles_in_play == {'B': 1,'A': 3, 'N': 2})
+  assert(b.tiles_remaining['B'] == 1)      # assumes initial count of 2
+  assert(b.tiles_remaining['A'] == 6)      # assumes initial count of 9
 
 
 # Given a word, check whether it's a valid play
@@ -54,7 +54,7 @@ def test_check_word():
   g.add_player('RH')
   g.add_player('JB')
 
-  g.board = {'A': 3, 'B': 1, 'N': 2}
+  g.board.tiles_in_play = {'A': 3, 'B': 1, 'N': 2}
 
   # test pulling letters only from board center
   assert(g.check_word('BANANA') == True)
@@ -64,7 +64,7 @@ def test_check_word():
   assert(g.check_word('BANANANA') == False)
 
   # test pulling letters from players
-  g.board = {'A': 1, 'B': 1, 'N': 2}
+  g.board.tiles_in_play = {'A': 1, 'B': 1, 'N': 2}
   g.players[0].add_word("A")
 
   assert(g.check_word('BANANA') == False)

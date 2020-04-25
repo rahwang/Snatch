@@ -22,7 +22,7 @@ from utilities import subtract_distributions
 
 
 
-class Board(object):
+class Board():
 
   def __init__(self, num_tiles, tile_distribution):
     self.tiles_in_play = get_empty_tile_distribution()
@@ -49,8 +49,7 @@ class Board(object):
       random_letter = letters_available[random_index]
       random_letter_remaining_count = self.get_number_of_letter_in_play(random_letter)
       print(random_letter_remaining_count)
-
-    flip_letter(random_letter)
+      self.flip_letter(random_letter)
 
 
   def flip_letter(self, letter):
@@ -86,7 +85,7 @@ class Game(object):
   def __init__(self, dictionary, tile_distribution, game_rules):
 
     self.dictionary = dictionary
-    self.board = Board(tile_distribution)
+    self.board = Board(num_tiles=88, tile_distribution=tile_distribution)
     self.players = []
     self.rules = game_rules
 
@@ -114,20 +113,21 @@ class Game(object):
 
     new_word_dist = Counter(new_word)
 
-    for player in players:
+    for player in self.players:
       for player_word in player.words:
         # make new_word_dist
         # convert player word to player_word_dist
         # subtract player_word_dist from new_word_dist
         # see if new_word_dist is subset of tiles_in_play_dist
 
-        if word_is_subset(player_word, new_word):
+        if word_is_subset(player_word, Counter(new_word)):
           player_word_dist = Counter(player_word)
           remaining_dist = subtract_distributions(player_word_dist, new_word_dist)
 
           if distribution_is_subset(remaining_dist, self.board.tiles_in_play):
             return True
 
+    print(self.board)
     return word_is_subset(new_word, self.board.tiles_in_play)
 
 
