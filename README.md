@@ -34,6 +34,12 @@ Install dependencies:
 yarn install
 ```
 
+You might get an error about an incompatible version of engine node. If you do, try:
+
+```
+yarn install --ignore-engines
+```
+
 Run client:
 
 ```
