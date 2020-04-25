@@ -22,7 +22,7 @@ const Game = () => {
       setRequestStatus("loaded");
       setName(message.name);
     }
-  });
+  }, [lastMessage, sendMessage, requestStatus]);
 
   if (requestStatus !== "loaded") {
     return <div>loading . . . </div>;
