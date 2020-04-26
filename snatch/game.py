@@ -44,6 +44,11 @@ class Board():
   def claim_letter(self, letter):
     self.tiles_in_play[letter] -= 1
 
+  def claim_letter_distribution(self, dist):
+    for letter, count in dist.items():
+      for i in range(count):
+        self.board.claim_letter(letter)
+
   def get_number_tiles_remaining(self):
     counter = 0
     for tile in self.tiles_remaining.keys():
@@ -73,38 +78,73 @@ class Game(object):
     self.players = []
     self.min_word_length = game_rules['min_word_length']
 
+  # to run whenever a player presses enter
+  def player_calls_word(self, taking_player, new_word):
+    result = check_word(new_word)
+
+    if result['success']:
+
+      if result['player'] is None:
+        self.build_word_from_in_play(word, player)
+
+      else:   # check word found a player to steal from
+        self.snatch_word(old_word=result['old_word'],
+                        new_word=new_word,
+                        taking_player=taking_player,
+                        robbed_player=result['player'])
+
+  def snatch_word(old_word, new_word, taking_player, robbed_player):
+    new_letters = subtract_distributions(Counter(old_word), Counter(new_word))
+    self.board.claim_letter_distribution(new_letters)
+    robbed_player.remove(old_word)
+    taking_player.append(new_word)
+
+  def build_word_from_in_play(word, player):
+    self.board.claim_letter_distribution(Counter(word))
+    player.append(new_word)
+
   def add_player(self, name):
     self.players.append(Player(name))
 
+  # Returns dictionary with values:
+  #     success:      True only if the word is valid and formable
+  #     player:       the Player to steal from, if a steal is possible (otherwise None)
+  #     old_word:     the word to steal, if a steal is possible (otherwise None)
   def check_word(self, new_word):
 
     # Check that it is long enough
     if len(new_word) < self.min_word_length:
       print('Words must be at least {} letters long!'.format(self.min_word_length))
-      return False
+      return {'success': False, 'player': None, 'old_word': None}
 
     # Check that it is a valid dictionary word
     if not new_word in self.dictionary:
       print('Invalid word!')
-      return False
+      return {'success': False, 'player': None, 'old_word': None}
     
     new_word_dist = Counter(new_word)
 
-    for player in self.players:
-      
-      # Take a player word, see if it's a part of the new word. If it is, 
-      # see if the remaining letters are in the main board state
-      for player_word in player.words:
-        if word_is_subset(player_word, Counter(new_word)):
-          player_word_dist = Counter(player_word)
-          remaining_dist = subtract_distributions(player_word_dist, new_word_dist)
+    for player in self.players:      
+      for old_word in player.words:
 
+        # For a steal to be possible:
+        # - the new word must be longer
+        # - the old word must be a subset of the new word
+        if len(new_word) > len(old_word) and word_is_subset(old_word, Counter(new_word)):
+          old_word_dist = Counter(old_word)
+          remaining_dist = subtract_distributions(old_word_dist, new_word_dist)
+
+          # - the remaining letters of the new word that aren't in the old word
+          # must be in the main board state
           if distribution_is_subset(remaining_dist, self.board.tiles_in_play):
-            return True
+            return {'success': True, 'player': player, 'old_word': old_word}
 
-    # If word wasn't formable from any player words, see if it is formable
-    # from only center tiles
-    return word_is_subset(new_word, self.board.tiles_in_play)
+    # Word couldn't be formed with any player words.
+    # Check if it can be formed only from center
+    if word_is_subset(new_word, self.board.tiles_in_play):
+      return {'success': True, 'player': None, 'old_word': None}
+    else:
+      return {'success': False, 'player': None, 'old_word': None}
 
 
 class Player(object):

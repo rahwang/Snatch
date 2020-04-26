@@ -59,22 +59,22 @@ def test_check_word():
   g.board.tiles_in_play = {'A': 3, 'B': 1, 'N': 2}
 
   # test pulling letters only from board center
-  assert(g.check_word('BANANA') == True)
-  assert(g.check_word('BANANAS') == False)
-  assert(g.check_word('BAN') == True)
-  assert(g.check_word('BANK') == False)
-  assert(g.check_word('BANANANA') == False)
+  assert(g.check_word('BANANA')['success'] == True)
+  assert(g.check_word('BANANAS')['success'] == False)
+  assert(g.check_word('BAN')['success'] == False)     # less than minimum word length
+  assert(g.check_word('BANK')['success'] == False)
+  assert(g.check_word('BANANANA')['success'] == False)
 
   # test pulling letters from players
   g.board.tiles_in_play = {'A': 1, 'B': 1, 'N': 2}
   g.players[0].add_word("A")
 
-  assert(g.check_word('BANANA') == False)
+  assert(g.check_word('BANANA')['success'] == False)
 
   g.players[1].add_word("A")
 
-  assert(g.check_word('BANANA') == False)
+  assert(g.check_word('BANANA')['success'] == False)
 
   g.players[1].add_word("AA")
 
-  assert(g.check_word('BANANA') == True)
+  assert(g.check_word('BANANA')['success'] == True)
