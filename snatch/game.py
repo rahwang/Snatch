@@ -19,6 +19,7 @@ from utilities import load_scrabble_dictionary
 from utilities import word_is_subset
 from utilities import distribution_is_subset
 from utilities import subtract_distributions
+from utilities import weighted_random_choice_from_distribution
 
 
 
@@ -31,11 +32,16 @@ class Board():
     random.seed()
 
   def flip(self):
-    letters_remaining = list(self.tiles_remaining.keys())
-    if len(letters_remaining) == 0:
+    if len(self.tiles_remaining) == 0:
       return
-    chosen_letter = random.choice(letters_remaining)
+    chosen_letter = weighted_random_choice_from_distribution(self.tiles_remaining)
     self.flip_letter(chosen_letter)
+
+    # letters_remaining = list(self.tiles_remaining.keys())
+    # if len(letters_remaining) == 0:
+    #   return
+    # chosen_letter = random.choice(letters_remaining)
+    # self.flip_letter(chosen_letter)
 
   def flip_letter(self, letter):
     self.tiles_remaining[letter] -= 1

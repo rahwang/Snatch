@@ -1,5 +1,6 @@
 from collections import Counter
 from pathlib import Path
+import random
 
 def get_tile_distribution():
   return {'A': 9,
@@ -113,3 +114,16 @@ def load_scrabble_dictionary():
   with open(file_path) as f:
     valid_words = [line.strip() for line in f.readlines()]
     return set(valid_words)
+
+# choose a random key from a distribution in proportion to its value
+def weighted_random_choice_from_distribution(d, total=None):
+  if total is None:
+    total = sum(d.values())
+  threshold = total * random.uniform(0,1)
+  cumulative = 0
+  for k, v in d.items():
+    cumulative += v
+    if cumulative > threshold:
+      return k
+  print("Error: did not reach threshold")
+  return None
