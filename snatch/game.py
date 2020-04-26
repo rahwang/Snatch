@@ -37,12 +37,6 @@ class Board():
     chosen_letter = weighted_random_choice_from_distribution(self.tiles_remaining)
     self.flip_letter(chosen_letter)
 
-    # letters_remaining = list(self.tiles_remaining.keys())
-    # if len(letters_remaining) == 0:
-    #   return
-    # chosen_letter = random.choice(letters_remaining)
-    # self.flip_letter(chosen_letter)
-
   def flip_letter(self, letter):
     self.tiles_remaining[letter] -= 1
     self.tiles_in_play[letter] += 1
@@ -56,13 +50,11 @@ class Board():
       counter += self.tiles_remaining[tile]
     return counter
 
-
   def get_number_tiles_in_play(self):
     counter = 0
     for tile in self.tiles_in_play.keys():
       counter += self.tiles_in_play[tile]
     return counter
-
 
   def get_number_of_letter_in_play(self, letter):
     return self.tiles_in_play[letter]
@@ -72,22 +64,26 @@ class Board():
 class Game(object):
 
   # tile_distribution: {letter: count ...}
+  # game_rules: specifies parameters like minimum word length
 
   def __init__(self, dictionary, tile_distribution, game_rules):
 
     self.dictionary = dictionary
     self.board = Board(num_tiles=88, tile_distribution=tile_distribution)
     self.players = []
-    self.rules = game_rules
-
+    self.min_word_length = game_rules['min_word_length']
 
   def add_player(self, name):
-    p = Player(name)
-    self.players.append(p)
-
+    self.players.append(Player(name))
 
   def check_word(self, new_word):
 
+    # Check that it is long enough
+    if len(new_word) < self.min_word_length:
+      print('Words must be at least {} letters long!'.format(self.min_word_length))
+      return False
+
+    # Check that it is a valid dictionary word
     if not new_word in self.dictionary:
       print('Invalid word!')
       return False
