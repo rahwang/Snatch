@@ -4,8 +4,8 @@ from snatch.game import Board, Game
 def test_board_init():
   b = Board(num_tiles=88, tile_distribution=get_tile_distribution())
 
-  assert(b.get_number_tiles_in_play(), 0)
-  assert(b.get_number_tiles_remaining(), 88)
+  assert(b.get_number_tiles_in_play() == 0)
+  assert(b.get_number_tiles_remaining() == 88)
 
 
 def test_flip():
@@ -14,21 +14,21 @@ def test_flip():
 
   b.flip()
 
-  assert(b.get_number_tiles_in_play(), 1)
-  assert(b.get_number_tiles_remaining(), 87)
+  assert(b.get_number_tiles_in_play() == 1)
+  assert(b.get_number_tiles_remaining() == 87)
 
 
 def test_flip_letter():
   tile_distribution = get_tile_distribution()
   b = Board(num_tiles=88, tile_distribution=tile_distribution)
 
+  initial_Bs = b.tiles_remaining["B"]
   b.flip_letter("B")
 
-  initial_Bs = b.tiles_remaining["B"]
-  assert(b.get_number_tiles_in_play(), 1)
-  assert(b.get_number_tiles_remaining(), 87)
-  assert(b.tiles_in_play["B"], 1)
-  assert(b.tiles_remaining["B"], initial_Bs-1)
+  assert(b.get_number_tiles_in_play() == 1)
+  assert(b.get_number_tiles_remaining() == 87)
+  assert(b.tiles_in_play["B"] == 1)
+  assert(b.tiles_remaining["B"] == initial_Bs-1)
 
   b.flip_letter("A")
   b.flip_letter("N")
@@ -36,7 +36,9 @@ def test_flip_letter():
   b.flip_letter("N")
   b.flip_letter("A")
 
-  assert(b.tiles_in_play == {'B': 1,'A': 3, 'N': 2})
+  assert(b.tiles_in_play['B'] == 1)
+  assert(b.tiles_in_play['A'] == 3)
+  assert(b.tiles_in_play['Z'] == 0)
   assert(b.tiles_remaining['B'] == 1)      # assumes initial count of 2
   assert(b.tiles_remaining['A'] == 6)      # assumes initial count of 9
 

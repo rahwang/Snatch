@@ -63,12 +63,15 @@ def get_game_rules():
     'min_word_length': 4
   }
 
-
-# dist1 is a subset of dist2
+# Returns a dictionary with the difference between all values in dist2
+# and their corresponding values in dist1. 
+# - Assumes dist1 is a subset of dist2.
+# - If a key is missing from dist1, its value is taken to be 0
 def subtract_distributions(dist1, dist2):
+  result = {}
   for key in dist2.keys():
-    dist2[key] -= dist1[key]
-  return dist2
+    result[key] = dist2[key] - dist1[key]
+  return result
 
 
 # word: a string

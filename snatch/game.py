@@ -30,47 +30,32 @@ class Board():
 
     random.seed()
 
-
   def flip(self):
-    if (self.get_number_tiles_remaining == 0):
-      # end game here?
+    letters_remaining = list(self.tiles_remaining.keys())
+    if len(letters_remaining) == 0:
       return
-
-    letters_available =  list(self.tiles_remaining.keys())
-    letters_count = len(letters_available)
-    random.shuffle(letters_available)
-    random_index = random.randrange(0, letters_count)
-    random_letter = letters_available[random_index]
-    random_letter_remaining_count = self.get_number_of_letter_in_play(random_letter)
-
-    while random_letter_remaining_count == 0:
-      random_index += 1
-      random_index %= letters_count
-      random_letter = letters_available[random_index]
-      random_letter_remaining_count = self.get_number_of_letter_in_play(random_letter)
-      print(random_letter_remaining_count)
-      self.flip_letter(random_letter)
-
+    chosen_letter = random.choice(letters_remaining)
+    self.flip_letter(chosen_letter)
 
   def flip_letter(self, letter):
     self.tiles_remaining[letter] -= 1
     self.tiles_in_play[letter] += 1
 
-
   def claim_letter(self, letter):
     self.tiles_in_play[letter] -= 1
-
 
   def get_number_tiles_remaining(self):
     counter = 0
     for tile in self.tiles_remaining.keys():
       counter += self.tiles_remaining[tile]
+    return counter
 
 
   def get_number_tiles_in_play(self):
     counter = 0
     for tile in self.tiles_in_play.keys():
       counter += self.tiles_in_play[tile]
+    return counter
 
 
   def get_number_of_letter_in_play(self, letter):
@@ -100,26 +85,14 @@ class Game(object):
     if not new_word in self.dictionary:
       print('Invalid word!')
       return False
-
-    # check individual players
-    # for player in players:
-    #   for claimed_word in player.words:
-    #     player_word_dist = Counter(claimed_word)
-    #     available_dist = merge_distributions(player_word_dist, self.board.tiles_in_play)
-    #     if word_is_subset(new_word, available_dist):
-    #       return True # successful word steal
-    #     else:
-    #       pass
-
+    
     new_word_dist = Counter(new_word)
 
     for player in self.players:
+      
+      # Take a player word, see if it's a part of the new word. If it is, 
+      # see if the remaining letters are in the main board state
       for player_word in player.words:
-        # make new_word_dist
-        # convert player word to player_word_dist
-        # subtract player_word_dist from new_word_dist
-        # see if new_word_dist is subset of tiles_in_play_dist
-
         if word_is_subset(player_word, Counter(new_word)):
           player_word_dist = Counter(player_word)
           remaining_dist = subtract_distributions(player_word_dist, new_word_dist)
@@ -127,22 +100,10 @@ class Game(object):
           if distribution_is_subset(remaining_dist, self.board.tiles_in_play):
             return True
 
-    print(self.board)
+    # If word wasn't formable from any player words, see if it is formable
+    # from only center tiles
     return word_is_subset(new_word, self.board.tiles_in_play)
 
-
-     # 1. take a player word, merge it with the board, see if new_word is in that bigger distribution
-     # 2. Take a player word, see if its a part of the new word, if it is, see if the remaining letters are in the main board state
-
-    # check letters in the center of the board
-    """
-    alphabet = self.board.tiles_in_play.keys()
-    for letter in alphabet:
-      number_available = get_number_in_play(letter)
-      number_needed = new_word.count(letter)
-      if (number_needed > number_available):
-        return False
-    """
 
 class Player(object):
 
